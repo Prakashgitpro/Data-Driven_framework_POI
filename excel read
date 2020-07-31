@@ -1,0 +1,67 @@
+package seleniumpack;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+
+public class datadriven {
+	static ArrayList<String> uname=new ArrayList<String>();
+	static ArrayList<String> pword=new ArrayList<String>();
+
+	public void excel() throws IOException {
+		FileInputStream excel=new FileInputStream("C:\\Users\\Prakash\\Desktop\\data.xlsx");
+		Workbook workb=new XSSFWorkbook(excel);
+		Sheet sheet =workb.getSheetAt(0);
+		Iterator<Row> row=sheet.iterator();
+		while(row.hasNext()) {
+			Row row1=row.next();
+			Iterator<Cell> column=row1.iterator();
+			int i=2;
+			while(column.hasNext()) {
+				if(i%2==0){		
+					uname.add(column.next().getStringCellValue());
+				}else {		
+					pword.add(column.next().getStringCellValue());
+				}
+				i++;
+			}
+		}
+
+	}
+
+	public void facebook(String username,String Password) {
+		//System.setProperty("WebDriver.gecko.driver", "E:\\Testing Tools\\geckodriver.exe");
+		//WebDriver d=new FirefoxDriver();
+		System.setProperty("webdriver.gecko.driver", "E:\\Testing Tools\\geckodriver.exe");
+		WebDriver d= new FirefoxDriver();
+
+		d.get("https://facebook.com");
+		d.findElement(By.id("email")).sendKeys(username);
+		d.findElement(By.id("pass")).sendKeys(Password);
+		d.quit();
+	}
+	public void exceute() {	
+		for (int i=0;i<uname.size();i++) {
+			facebook(uname.get(i), pword.get(i));
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+
+		datadriven datadriven=new datadriven();
+		datadriven.excel();
+		System.out.println("username"+uname);
+		System.out.println("password"+pword);
+		datadriven.exceute();
+
+	}}
